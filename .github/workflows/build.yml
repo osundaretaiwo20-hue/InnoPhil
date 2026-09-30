@@ -1,17 +1,12 @@
 name: Build and release InnoPhil APK
 
-# Runs automatically every time you (or I, on your behalf) push a change
-# to main. Each run: builds a debug APK stamped with this run's number as
-# the version, then publishes it as a GitHub Release tagged "vN". The
-# in-app update checker (UpdateChecker.kt) reads that tag to know when a
-# newer build exists.
 on:
   push:
     branches: [ main, master ]
   workflow_dispatch: {}
 
 permissions:
-  contents: write  # needed to publish a Release
+  contents: write
 
 jobs:
   build:
@@ -32,6 +27,10 @@ jobs:
         with:
           gradle-version: 8.7
 
+      - name: Recreate the fixed debug signing key
+        run: |
+          echo "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" | base64 -d > ci-debug.keystore
+
       - name: Build debug APK (versioned v${{ github.run_number }})
         run: >
           gradle assembleDebug
@@ -41,7 +40,7 @@ jobs:
       - name: Rename APK for the release
         run: cp app/build/outputs/apk/debug/app-debug.apk InnoPhil-v${{ github.run_number }}.apk
 
-      - name: Upload APK as a workflow artifact (always available, even without a Release)
+      - name: Upload APK as a workflow artifact
         uses: actions/upload-artifact@v4
         with:
           name: InnoPhil-debug-apk
