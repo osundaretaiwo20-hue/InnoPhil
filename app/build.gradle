@@ -11,12 +11,11 @@ android {
         applicationId "com.innophil.app"
         minSdk 26
         targetSdk 34
-        // These two are overridden by GitHub Actions on every build
-        // (see .github/workflows/build.yml) so the running app's version
-        // always matches the GitHub Release tag that UpdateChecker
-        // compares against. Local Android Studio builds fall back to "v0".
-        versionCode (project.findProperty("appVersionCode") ?: "1").toInteger()
-        versionName (project.findProperty("appVersionName") ?: "v0").toString()
+        // Static for now to get a first working build installed.
+        // We'll wire automatic CI version-stamping back in once the app
+        // is confirmed working on the phone.
+        versionCode 1
+        versionName "v1"
     }
 
     buildTypes {
