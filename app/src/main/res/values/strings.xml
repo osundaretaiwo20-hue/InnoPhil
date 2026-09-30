@@ -1,17 +1,4 @@
-pluginManagement {
-    repositories {
-        google()
-        mavenCentral()
-        gradlePluginPortal()
-    }
-}
-dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-    repositories {
-        google()
-        mavenCentral()
-    }
-}
-
-rootProject.name = "InnoPhil"
-include(":app")
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">InnoPhil</string>
+</resources>
