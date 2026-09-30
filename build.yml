@@ -1,0 +1,57 @@
+name: Build and release InnoPhil APK
+
+# Runs automatically every time you (or I, on your behalf) push a change
+# to main. Each run: builds a debug APK stamped with this run's number as
+# the version, then publishes it as a GitHub Release tagged "vN". The
+# in-app update checker (UpdateChecker.kt) reads that tag to know when a
+# newer build exists.
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch: {}
+
+permissions:
+  contents: write  # needed to publish a Release
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: 8.7
+
+      - name: Build debug APK (versioned v${{ github.run_number }})
+        run: >
+          gradle assembleDebug
+          -PappVersionCode=${{ github.run_number }}
+          -PappVersionName=v${{ github.run_number }}
+
+      - name: Rename APK for the release
+        run: cp app/build/outputs/apk/debug/app-debug.apk InnoPhil-v${{ github.run_number }}.apk
+
+      - name: Upload APK as a workflow artifact (always available, even without a Release)
+        uses: actions/upload-artifact@v4
+        with:
+          name: InnoPhil-debug-apk
+          path: InnoPhil-v${{ github.run_number }}.apk
+
+      - name: Publish GitHub Release with the APK attached
+        uses: ncipollo/release-action@v1
+        with:
+          tag: v${{ github.run_number }}
+          name: InnoPhil v${{ github.run_number }}
+          artifacts: InnoPhil-v${{ github.run_number }}.apk
+          body: "Automatic build from commit ${{ github.sha }}"
+          allowUpdates: true
