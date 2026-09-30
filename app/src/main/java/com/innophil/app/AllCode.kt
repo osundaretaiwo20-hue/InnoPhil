@@ -134,6 +134,11 @@ object PermissionsHelper {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             add(Manifest.permission.BLUETOOTH_CONNECT)
         }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            // Required since Android 13, or the always-on protection
+            // notification crashes the app the moment it tries to show.
+            add(Manifest.permission.POST_NOTIFICATIONS)
+        }
     }.toTypedArray()
 
     fun allGranted(context: Context): Boolean =
