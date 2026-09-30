@@ -15,6 +15,7 @@
 
     <!-- Background service that survives reboot / doze -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CAMERA" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
@@ -30,8 +31,7 @@
     <!-- Device Admin, needed for the remote wipe / remote-Wi-Fi-on / password-attempt callback -->
     <uses-permission android:name="android.permission.BIND_DEVICE_ADMIN" />
 
-    <!-- In-app update flow: download a new APK from GitHub Releases and
-         prompt you to install it, instead of you fetching it manually -->
+    <!-- In-app update flow -->
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 
     <application
@@ -40,8 +40,6 @@
         android:theme="@style/Theme.InnoPhil"
         android:usesCleartextTraffic="false">
 
-        <!-- Setup / onboarding screen: the ONLY screen the user ever sees.
-             After setup is complete this can be hidden from the launcher (see README). -->
         <activity
             android:name=".SetupActivity"
             android:exported="true">
@@ -51,8 +49,6 @@
             </intent-filter>
         </activity>
 
-        <!-- Device Admin receiver: unlocks onPasswordFailed(), remote lock/wipe,
-             and the remote Wi-Fi-on pathway described in our conversation -->
         <receiver
             android:name=".InnoPhilDeviceAdminReceiver"
             android:permission="android.permission.BIND_DEVICE_ADMIN"
@@ -65,42 +61,35 @@
             </intent-filter>
         </receiver>
 
-        <!-- Core background brain: foreground service, always alive -->
         <service
             android:name=".GuardianService"
             android:foregroundServiceType="camera|microphone|location"
             android:exported="false" />
 
-        <!-- SIM state changed -> possible SIM swap -->
         <receiver android:name=".SimChangeReceiver" android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.SIM_STATE_CHANGED" />
             </intent-filter>
         </receiver>
 
-        <!-- Phone is being powered off -> last-chance capture -->
         <receiver android:name=".ShutdownReceiver" android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.ACTION_SHUTDOWN" />
             </intent-filter>
         </receiver>
 
-        <!-- Restart the guardian service after reboot -->
         <receiver android:name=".BootReceiver" android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
 
-        <!-- Connectivity changes -> flush the upload queue, attempt Wi-Fi auto-join -->
         <receiver android:name=".NetworkStateReceiver" android:exported="false">
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
         </receiver>
 
-        <!-- Lets the system installer safely open the APK file we download
-             for the in-app update flow (ApkInstaller.kt) -->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
