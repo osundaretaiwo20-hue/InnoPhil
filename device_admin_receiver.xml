@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<device-admin xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-policies>
+        <!-- Lets us hear about failed unlock attempts -> "wrong PIN" trigger -->
+        <limit-password />
+        <watch-login />
+        <!-- Needed for the remote lock / remote wipe commands from the dashboard -->
+        <force-lock />
+        <wipe-data />
+    </uses-policies>
+</device-admin>
